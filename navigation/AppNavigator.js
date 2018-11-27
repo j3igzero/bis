@@ -1,10 +1,13 @@
-import React from 'react';
-import { createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from "react-navigation";
 
-import MainTabNavigator from './MainTabNavigator';
+import HomeScreen from "../screens/HomeScreen";
+import ScanColorScreen from "../screens/ScanColorScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
-export default createSwitchNavigator({
-  // You could add another route here for authentication.
-  // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-  Main: MainTabNavigator,
+const AppNavigator = createStackNavigator({
+    Home: HomeScreen,
+    ScanColor: ScanColorScreen,
+    Settings: SettingsScreen,
 });
+
+export default AppNavigator;
