@@ -1,17 +1,18 @@
 import React from "react";
-import { StyleSheet } from 'react-native';
-import { Container, Content, Header, Body, Title, Right, Button, Icon, Grid, Col, Row } from "native-base";
+import { Platform, StyleSheet } from 'react-native';
+import { Container, Content, Header, Body, Title, Right, Button, Icon, Grid, Col, Row, Left } from "native-base";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <Header>
+        {Platform.OS === 'ios' ? <Left /> : null}
         <Body>
           <Title>Home</Title>
         </Body>
         <Right>
           <Button transparent onPress={() => navigation.navigate("Settings")}>
-            <Icon name="settings" />
+            <Icon android="md-settings" ios="ios-settings" />
           </Button>
         </Right>
       </Header>
@@ -26,7 +27,7 @@ export default class HomeScreen extends React.Component {
             <Row>
               <Col style={styles.col}>
                 <Button bordered dark full style={styles.button}
-                  onPress={() => this.props.navigation.navigate("ScanColor")}
+                  onPress={() => this.props.navigation.navigate("Camera")}
                 >
                   <Icon type="FontAwesome" name="camera" style={styles.icon} />
                 </Button>

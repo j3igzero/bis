@@ -1,13 +1,18 @@
 import { createStackNavigator } from "react-navigation";
 
-import HomeScreen from "../screens/HomeScreen";
-import ScanColorScreen from "../screens/ScanColorScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import MainNavigator from "./MainNavigator";
+import CameraScreen from "../screens/CameraScreen";
 
-const AppNavigator = createStackNavigator({
-    Home: HomeScreen,
-    ScanColor: ScanColorScreen,
-    Settings: SettingsScreen,
-});
+const AppNavigator = createStackNavigator(
+    {
+        Main: MainNavigator,
+        Camera: CameraScreen,
+    },
+    {
+        initialRouteName: "Main",
+        mode: "modal",
+        headerMode: "none",
+    }
+);
 
 export default AppNavigator;

@@ -6,7 +6,7 @@
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -18,14 +18,18 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
     "androidStatusBarColor": "#334393",
     "androidStatusBar": {
       "barStyle": "light-content",
       "backgroundColor": "#334393"
     },
+    "android": {
+      "package": "app.bostonindustrialsolutions.com"
+    },
     "ios": {
+      "bundleIdentifier": "app.bostonindustrialsolutions.com",
       "supportsTablet": true
     }
   }
