@@ -27,7 +27,7 @@ export default class HomeScreen extends React.Component {
             <Row>
               <Col style={styles.col}>
                 <Button bordered dark full style={styles.button}
-                  onPress={() => this.props.navigation.navigate("Camera")}
+                  onPress={() => this.props.navigation.navigate("Colors")}
                 >
                   <Icon type="FontAwesome" name="camera" style={styles.icon} />
                 </Button>

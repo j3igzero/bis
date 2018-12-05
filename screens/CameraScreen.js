@@ -107,12 +107,19 @@ export default class CameraScreen extends React.Component {
 
   handleMountError = ({ message }) => console.error(message);
 
+  goBack = (imageUri) => {
+    const { navigation } = this.props;
+    navigation.goBack();
+    navigation.state.params.onImageUpdate({ imageUri });
+  };
+
   onPictureSaved = async photo => {
+    const destUri = `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`;
     await FileSystem.moveAsync({
       from: photo.uri,
-      to: `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`,
+      to: destUri,
     });
-    this.setState({ newPhotos: true });
+    this.goBack(destUri);
   }
 
   onBarCodeScanned = code => {
@@ -236,7 +243,7 @@ export default class CameraScreen extends React.Component {
       <TouchableOpacity style={styles.toggleButton} onPress={this.toggleFocus}>
         <Text style={[styles.autoFocusLabel, { color: this.state.autoFocus === 'on' ? "white" : "#6b6b6b" }]}>AF</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.toggleButton} onPress={() => this.props.navigation.goBack()}>
+      <TouchableOpacity style={styles.toggleButton} onPress={() => this.goBack(null)}>
         <Ionicons name="ios-close" size={32} color="white" />
       </TouchableOpacity>   
     </View>
