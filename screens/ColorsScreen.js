@@ -1,7 +1,8 @@
 import React from "react";
-import { Image, StyleSheet } from 'react-native';
+import { Dimensions, Image, StyleSheet } from 'react-native';
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View } from "native-base";
 import { getAllSwatches } from "react-native-palette";
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class ColorsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -26,11 +27,24 @@ export default class ColorsScreen extends React.Component {
 
   state = {
     imageUri: undefined,
+    dim: {},
     swatches: [],
   };
 
   componentDidMount = () => {
+    Dimensions.addEventListener('change', this.onDimChange);
+    this.onDimChange();
     this.goToCamera();
+  };
+
+  componentWillUnmount = () => {
+    Dimensions.removeEventListener('change', this.onDimChange);
+  };
+
+  onDimChange = () => {
+    this.setState({
+      dim: Dimensions.get('window')
+    });
   };
 
   goToCamera = () => {
@@ -41,24 +55,26 @@ export default class ColorsScreen extends React.Component {
 
   onImageUpdate = ({ imageUri }) => {
     this.setState({ imageUri }, () => {
-      console.log("this.state.imageUri " + this.state.imageUri);
       if (!this.state.imageUri) {
         return;
       }
       getAllSwatches({}, this.state.imageUri.substr(8), (error, swatches) => {
         if (error) {
-          console.log(error);
+          console.error(error);
         } else {
           swatches.sort((a, b) => {
             return b.population - a.population;
-          });
-          swatches.forEach((swatch) => {
-            console.log(swatch.swatchInfo);
           });
           this.setState({ swatches });
         }
       });
     });
+  };
+
+  removeColor = (swatch) => {
+    this.setState((state) => ({
+      swatches: state.swatches.filter((s) => s.color !== swatch.color),
+    }));
   };
 
   renderInkButton = () => (
@@ -68,33 +84,43 @@ export default class ColorsScreen extends React.Component {
     </Button>
   );
 
-  renderColors = () => (
-    <View padder style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-      {this.state.swatches.map((swatch, i) => (
-        <View key={i} style={{ width: 150, height: 100, flexDirection: 'column', alignItems: 'center', marginBottom: 8 }}>
-          <View style={{ width: 80, height: 80, backgroundColor: swatch.color }} />
-          <Text style={{ fontSize: 10 }}>{swatch.titleTextColor}</Text>
-        </View>
-      ))}
-    </View>
-  );
+  renderColors = () => {
+    const { width } = this.state.dim;
+    const minItemWidth = 150;
+    const itemWidth = width / Math.floor(width / minItemWidth);
+
+    return (
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        {this.state.swatches.map((swatch, i) => (
+          <View key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: swatch.color }}>
+            <Button small transparent style={styles.colorItemRemoveBtn}
+              onPress={() => this.removeColor(swatch)}
+            >
+              <Icon type="Ionicons" name="close" style={styles.colorItemRemoveTxt} />
+            </Button>
+            <Text style={styles.colorItemTitle}>{swatch.color.toUpperCase()}</Text>
+          </View>
+        ), this)}
+      </View>
+    );
+  };
 
   render() {
     return (
       <Container>
         <Content>
-          <View style={styles.imageContainer}>
+          <LinearGradient colors={['#3F51B5', '#5cb85c']} style={styles.imageContainer}>
             {this.state.imageUri ? (
               <Image source={{ uri: this.state.imageUri }} style={styles.image} resizeMode="contain" />
             ) : (
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: 'grey', fontStyle: 'italic' }}>Take a photo to analyze colors</Text>
+                <Text style={{ color: 'white', fontStyle: 'italic' }}>Take a photo to analyze colors</Text>
               </View>
             )}
             <Button bordered style={{ position: 'absolute', bottom: 4, right: 4, borderColor: 'green', backgroundColor: 'rgba(255, 255, 255, 0.5)' }} onPress={() => this.goToCamera()}>
               <Icon type="FontAwesome" name="camera" />
             </Button>
-          </View>
+          </LinearGradient>
           {this.state.imageUri && (
             <View>
               {this.renderColors()}
@@ -110,7 +136,6 @@ export default class ColorsScreen extends React.Component {
 const styles = StyleSheet.create({
   imageContainer: {
     alignItems: "stretch",
-    backgroundColor: "#eeeeee",
     flex: 1,
     height: 200,
   },
@@ -118,5 +143,37 @@ const styles = StyleSheet.create({
     flex: 1,
     height: null,
     width: null,
+  },
+  colorItem: {
+    width: null,
+    height: 150,
+    flexDirection: 'row',
+  },
+  colorItemTitle: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: '#ffffff',
+    fontSize: 10,
+    padding: 4,
+  },
+  colorItemRemoveBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+  },
+  colorItemRemoveTxt: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    marginLeft: 0,
+    marginRight: 0,
+    paddingLeft: 6,
+    paddingTop: 2,
   },
 });
