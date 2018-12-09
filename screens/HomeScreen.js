@@ -26,26 +26,26 @@ export default class HomeScreen extends React.Component {
           <Grid>
             <Row>
               <Col style={styles.col}>
-                <Button bordered dark full style={styles.button}
+                <Button bordered primary full style={styles.button}
                   onPress={() => this.props.navigation.navigate("Colors")}
                 >
                   <Icon type="FontAwesome" name="camera" style={styles.icon} />
                 </Button>
               </Col>
               <Col style={styles.col}>
-                <Button bordered dark full style={styles.button}>
+                <Button bordered primary full style={styles.button}>
                   <Icon type="FontAwesome" name="shopping-cart" style={styles.icon} />
                 </Button>
               </Col>
             </Row>
             <Row>
               <Col style={styles.col}>
-                <Button bordered dark full style={styles.button}>
+                <Button bordered primary full style={styles.button}>
                   <Icon type="FontAwesome" name="newspaper-o" style={styles.icon} />
                 </Button>
               </Col>
               <Col style={styles.col}>
-                <Button bordered dark full style={styles.button}>
+                <Button bordered primary full style={styles.button}>
                   <Icon type="FontAwesome" name="comments" style={styles.icon} />
                 </Button>
               </Col>
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   button: {
+    borderColor: 'green',
     height: 134,
   },
   icon: {
