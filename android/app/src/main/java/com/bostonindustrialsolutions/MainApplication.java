@@ -3,10 +3,10 @@ package com.bostonindustrialsolutions;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import io.palette.RNPalettePackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-import org.reactnative.camera.RNCameraPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -27,10 +27,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerPackage(),
             new LinearGradientPackage(),
             new RNPalettePackage(),
-            new RNGestureHandlerPackage(),
-            new RNCameraPackage()
+            new RNGestureHandlerPackage()
       );
     }
 

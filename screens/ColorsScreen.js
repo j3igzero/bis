@@ -3,6 +3,7 @@ import { Dimensions, Image, StyleSheet } from 'react-native';
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View } from "native-base";
 import { getAllSwatches } from "react-native-palette";
 import LinearGradient from 'react-native-linear-gradient';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default class ColorsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -34,7 +35,7 @@ export default class ColorsScreen extends React.Component {
   componentDidMount = () => {
     Dimensions.addEventListener('change', this.onDimChange);
     this.onDimChange();
-    this.goToCamera();
+    this.openCamera();
   };
 
   componentWillUnmount = () => {
@@ -47,9 +48,17 @@ export default class ColorsScreen extends React.Component {
     });
   };
 
-  goToCamera = () => {
-    this.props.navigation.navigate("Camera", {
-      onImageUpdate: this.onImageUpdate
+  openCamera = () => {
+    ImagePicker.openCamera({
+      cropperToolbarTitle: 'Select Area',
+      width: 2000,
+      height: 2000,
+      cropping: true
+    }).then(image => {
+      console.log(image);
+      this.onImageUpdate({ imageUri: image.path })
+    }).catch(err => {
+      console.log(err);
     });
   };
 
@@ -90,7 +99,7 @@ export default class ColorsScreen extends React.Component {
     const itemWidth = width / Math.floor(width / minItemWidth);
 
     return (
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+      <View style={styles.colorList}>
         {this.state.swatches.map((swatch, i) => (
           <View key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: swatch.color }}>
             <Button small transparent style={styles.colorItemRemoveBtn}
@@ -113,11 +122,9 @@ export default class ColorsScreen extends React.Component {
             {this.state.imageUri ? (
               <Image source={{ uri: this.state.imageUri }} style={styles.image} resizeMode="contain" />
             ) : (
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: 'white', fontStyle: 'italic' }}>Take a photo to analyze colors</Text>
-              </View>
+              <Text style={styles.imagePlaceholderTxt}>Take a photo to analyze colors</Text>
             )}
-            <Button bordered style={{ position: 'absolute', bottom: 4, right: 4, borderColor: 'green', backgroundColor: 'rgba(255, 255, 255, 0.5)' }} onPress={() => this.goToCamera()}>
+            <Button bordered style={styles.cameraBtn} onPress={() => this.openCamera()}>
               <Icon type="FontAwesome" name="camera" />
             </Button>
           </LinearGradient>
@@ -135,14 +142,37 @@ export default class ColorsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    alignItems: "stretch",
     flex: 1,
-    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 228,
   },
   image: {
+    height: 220,
+    width: 220,
+    borderWidth: 0.5,
+    borderColor: 'white',
+  },
+  imagePlaceholder: {
     flex: 1,
-    height: null,
-    width: null,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imagePlaceholderTxt: {
+    color: 'white',
+    fontStyle: 'italic',
+  },
+  cameraBtn: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    borderColor: 'green',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  colorList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
   },
   colorItem: {
     width: null,

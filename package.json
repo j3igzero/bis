@@ -10,8 +10,8 @@
     "native-base": "^2.8.1",
     "react": "16.6.1",
     "react-native": "0.57.7",
-    "react-native-camera": "^1.5.1",
     "react-native-gesture-handler": "^1.0.10",
+    "react-native-image-crop-picker": "^0.21.3",
     "react-native-linear-gradient": "^2.5.3",
     "react-native-palette": "^0.3.2",
     "react-navigation": "^3.0.6"
