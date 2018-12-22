@@ -1,9 +1,11 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet } from 'react-native';
+import { Dimensions, Image, StyleSheet, AsyncStorage } from 'react-native';
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View } from "native-base";
 import { getAllSwatches } from "react-native-palette";
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
+
+import constants from "../constants";
 
 export default class ColorsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -35,7 +37,13 @@ export default class ColorsScreen extends React.Component {
   componentDidMount = () => {
     Dimensions.addEventListener('change', this.onDimChange);
     this.onDimChange();
-    this.openCamera();
+
+    const image = this.props.navigation.getParam('image');
+    if (image) {
+      this.onImageUpdate({ imageUri: image.path });
+    } else {
+      this.openCamera();
+    }
   };
 
   componentWillUnmount = () => {
@@ -54,11 +62,31 @@ export default class ColorsScreen extends React.Component {
       width: 2000,
       height: 2000,
       cropping: true
-    }).then(image => {
-      console.log(image);
+    }).then((image) => {
+      this.saveImage(image);
       this.onImageUpdate({ imageUri: image.path })
-    }).catch(err => {
-      console.log(err);
+    }).catch((error) => {
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        console.warn(error);
+      }
+    });
+  };
+
+  saveImage = (image) => {
+    AsyncStorage.getItem(constants.IMAGES_STORAGE_KEY, (error, result) => {
+      if (error) {
+        console.warn('Get images error', error);
+      }
+      let images = result ? JSON.parse(result) : [];
+      images.push({
+        ...image,
+        timestamp: +new Date(),
+      });
+      AsyncStorage.setItem(constants.IMAGES_STORAGE_KEY, JSON.stringify(images), (error) => {
+        if (error) {
+          console.warn('Save images error', error);
+        }
+      });
     });
   };
 
@@ -128,12 +156,8 @@ export default class ColorsScreen extends React.Component {
               <Icon type="FontAwesome" name="camera" />
             </Button>
           </LinearGradient>
-          {this.state.imageUri && (
-            <View>
-              {this.renderColors()}
-              {this.renderInkButton()}
-            </View>
-          )}
+          {this.state.imageUri && this.renderColors()}
+          {!!this.state.swatches.length && this.renderInkButton()}
         </Content>
       </Container>
     );

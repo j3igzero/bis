@@ -1,13 +1,15 @@
 import { createStackNavigator } from "react-navigation";
 
+import ColorsScreen from "../screens/ColorsScreen";
+import HistoryScreen from "../screens/HistoryScreen";
 import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import ColorsScreen from "../screens/ColorsScreen";
 
 const AppNavigator = createStackNavigator(
     {
-        Home: HomeScreen,
         Colors: ColorsScreen,
+        History: HistoryScreen,
+        Home: HomeScreen,
         Settings: SettingsScreen,
     },
     {
