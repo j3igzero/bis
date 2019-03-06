@@ -114,27 +114,33 @@ export default class ColorsScreen extends React.Component {
     }));
   };
 
-  renderInkButton = () => (
-    <Button full iconLeft style={styles.inkBtn}>
-      <Icon type="FontAwesome" name="paint-brush" />
-      <Text>Recommend Inks</Text>
-    </Button>
-  );
+  renderInkButton = () => {
+    const { swatches } = this.state;
+    
+    return (
+      <Button full iconLeft style={styles.inkBtn} disabled={swatches.length !== 1}>
+        <Icon type="FontAwesome" name="paint-brush" />
+        {swatches.length === 1 ? <Text>Recommend Inks</Text> : <Text>Keep only one main color</Text>}
+      </Button>
+    );
+  };
 
   renderColors = () => {
-    const { width } = this.state.dim;
+    const { dim, swatches } = this.state;
     const minItemWidth = 150;
-    const itemWidth = width / Math.floor(width / minItemWidth);
+    const itemWidth = dim.width / Math.floor(dim.width / minItemWidth);
 
     return (
       <View style={styles.colorList}>
-        {this.state.swatches.map((swatch, i) => (
+        {swatches.map((swatch, i) => (
           <View key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: swatch.color }}>
-            <Button small transparent style={styles.colorItemRemoveBtn}
-              onPress={() => this.removeColor(swatch)}
-            >
-              <Icon type="Ionicons" name="close" style={styles.colorItemRemoveTxt} />
-            </Button>
+            {swatches.length !== 1 && (
+              <Button small transparent style={styles.colorItemRemoveBtn}
+                onPress={() => this.removeColor(swatch)}
+              >
+                <Icon type="Ionicons" name="close" style={styles.colorItemRemoveTxt} />
+              </Button>
+            )}
             <Text style={styles.colorItemTitle}>{swatch.color.toUpperCase()}</Text>
           </View>
         ), this)}
