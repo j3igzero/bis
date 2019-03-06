@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, Image, StyleSheet, AsyncStorage } from 'react-native';
-import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View } from "native-base";
+import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View, Footer, FooterTab } from "native-base";
 import { getAllSwatches } from "react-native-palette";
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -118,9 +118,10 @@ export default class ColorsScreen extends React.Component {
     const { swatches } = this.state;
     
     return (
-      <Button full iconLeft style={styles.inkBtn} disabled={swatches.length !== 1}>
-        <Icon type="FontAwesome" name="paint-brush" />
-        {swatches.length === 1 ? <Text>Recommend Inks</Text> : <Text>Keep only one main color</Text>}
+      <Button full style={styles.defaultBtn} disabled={swatches.length !== 1}
+        onPress={() => this.props.navigation.navigate("Inks")}
+      >
+        <Text style={styles.defaultBtnText}>{swatches.length === 1 ? 'Recommend Inks' : 'Keep only one main color'}</Text>
       </Button>
     );
   };
@@ -163,8 +164,14 @@ export default class ColorsScreen extends React.Component {
             </Button>
           </LinearGradient>
           {this.state.imageUri && this.renderColors()}
-          {!!this.state.swatches.length && this.renderInkButton()}
         </Content>
+        {!!this.state.swatches.length && (
+          <Footer>
+            <FooterTab>
+              {this.renderInkButton()}
+            </FooterTab>
+          </Footer>
+        )}
       </Container>
     );
   }
@@ -242,7 +249,10 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
     paddingTop: 2,
   },
-  inkBtn: {
+  defaultBtn: {
     backgroundColor: '#93c47d',
+  },
+  defaultBtnText: {
+    color: '#ffffff',
   },
 });
