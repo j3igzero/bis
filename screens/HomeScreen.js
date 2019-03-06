@@ -5,7 +5,7 @@ import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Vie
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
-      <Header>
+      <Header style={styles.header} androidStatusBarColor="#93c47d">
         {Platform.OS === 'ios' ? <Left /> : null}
         <Body>
           <Title>Home</Title>
@@ -66,6 +66,9 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: '#93c47d',
+  },
   actionList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -88,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionIcon: {
-    color: '#3F51B5',
+    color: '#93c47d',
     fontSize: 40,
   },
 });

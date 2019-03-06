@@ -10,7 +10,7 @@ import constants from "../constants";
 export default class ColorsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
-      <Header>
+      <Header style={styles.header} androidStatusBarColor="#93c47d">
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
             <Icon android="md-arrow-back" ios="ios-arrow-back" />
@@ -115,7 +115,7 @@ export default class ColorsScreen extends React.Component {
   };
 
   renderInkButton = () => (
-    <Button full iconLeft success>
+    <Button full iconLeft style={styles.inkBtn}>
       <Icon type="FontAwesome" name="paint-brush" />
       <Text>Recommend Inks</Text>
     </Button>
@@ -146,14 +146,14 @@ export default class ColorsScreen extends React.Component {
     return (
       <Container>
         <Content>
-          <LinearGradient colors={['#3F51B5', '#5cb85c']} style={styles.imageContainer}>
+          <LinearGradient colors={['#eeeeee', '#eeeeee']} style={styles.imageContainer}>
             {this.state.imageUri ? (
               <Image source={{ uri: this.state.imageUri }} style={styles.image} resizeMode="contain" />
             ) : (
               <Text style={styles.imagePlaceholderTxt}>Take a photo to analyze colors</Text>
             )}
             <Button bordered style={styles.cameraBtn} onPress={() => this.openCamera()}>
-              <Icon type="FontAwesome" name="camera" />
+              <Icon type="FontAwesome" name="camera" style={styles.cameraIcon} />
             </Button>
           </LinearGradient>
           {this.state.imageUri && this.renderColors()}
@@ -165,6 +165,9 @@ export default class ColorsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: '#93c47d',
+  },
   imageContainer: {
     flex: 1,
     alignItems: 'center',
@@ -192,6 +195,9 @@ const styles = StyleSheet.create({
     right: 4,
     borderColor: 'green',
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  cameraIcon: {
+    color: '#93c47d',
   },
   colorList: {
     flexDirection: 'row',
@@ -229,5 +235,8 @@ const styles = StyleSheet.create({
     marginRight: 0,
     paddingLeft: 6,
     paddingTop: 2,
+  },
+  inkBtn: {
+    backgroundColor: '#93c47d',
   },
 });
