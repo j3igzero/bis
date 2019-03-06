@@ -121,7 +121,7 @@ export default class ColorsScreen extends React.Component {
       <Button full style={styles.defaultBtn} disabled={swatches.length !== 1}
         onPress={() => this.props.navigation.navigate("Inks")}
       >
-        <Text style={styles.defaultBtnText}>{swatches.length === 1 ? 'Recommend Inks' : 'Keep only one main color'}</Text>
+        <Text style={styles.defaultBtnTxt}>{swatches.length === 1 ? 'Recommend Inks' : 'Keep only one main color'}</Text>
       </Button>
     );
   };
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   defaultBtn: {
     backgroundColor: '#93c47d',
   },
-  defaultBtnText: {
+  defaultBtnTxt: {
     color: '#ffffff',
   },
 });

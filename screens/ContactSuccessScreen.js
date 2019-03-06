@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
-import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab } from "native-base";
+import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, View } from "native-base";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -27,12 +27,19 @@ export default class HomeScreen extends React.Component {
     return (
       <Container>
         <Content padder>
-          
+          <View style={styles.textCenter}>
+            <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>CONGRATULATION !!!</Text>
+            <Text>Your request is sent successfully !</Text>
+            <Text>Our experts will contact us for more details</Text>
+            <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>THANK YOU !</Text>
+          </View>
         </Content>
         <Footer>
           <FooterTab>
-            <Button full style={styles.defaultBtn}>
-              <Text style={styles.defaultBtnText}>Our products & services</Text>
+            <Button full style={styles.defaultBtn}
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
+              <Text style={styles.defaultBtnTxt}>Our products & services</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -48,7 +55,16 @@ const styles = StyleSheet.create({
   defaultBtn: {
     backgroundColor: '#93c47d',
   },
-  defaultBtnText: {
+  defaultBtnTxt: {
     color: '#ffffff',
+  },
+  textCenter: {
+    alignItems: 'center',
+  },
+  strongTxt: {
+    fontWeight: 'bold',
+  },
+  mxMd: {
+    marginVertical: 20,
   },
 });
