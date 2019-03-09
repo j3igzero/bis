@@ -13,7 +13,7 @@ export default class HistoryScreen extends React.Component {
 
     return {
       header: (
-        <Header style={styles.header} androidStatusBarColor="#93c47d">
+        <Header>
           <Left>
             {isSelecting ? (
               <Button transparent onPress={() => params.handleCancelSelect()}>
@@ -277,9 +277,6 @@ export default class HistoryScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#93c47d',
-  },
   notFound: {
     padding: 8,
     alignItems: 'center',
@@ -318,6 +315,6 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
   },
   selectedIcon: {
-    color: '#93c47d',
+    color: '#3F51B5',
   },
 });
