@@ -5,7 +5,7 @@ import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Tex
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
-      <Header style={styles.header} androidStatusBarColor="#93c47d">
+      <Header>
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
             <Icon android="md-arrow-back" ios="ios-arrow-back" />
@@ -59,7 +59,7 @@ export default class HomeScreen extends React.Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button full style={styles.defaultBtn}
+            <Button full success
               onPress={() => this.props.navigation.navigate("Contact")}
             >
               <Text style={styles.defaultBtnTxt}>Contact to quote</Text>
@@ -72,12 +72,6 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#93c47d',
-  },
-  defaultBtn: {
-    backgroundColor: '#93c47d',
-  },
   defaultBtnTxt: {
     color: '#ffffff',
   },
