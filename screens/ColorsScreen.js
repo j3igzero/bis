@@ -115,9 +115,7 @@ export default class ColorsScreen extends React.Component {
     
     return (
       <Button full success disabled={selectedColor == null}
-        onPress={() => this.props.navigation.navigate("Inks", {
-          color: selectedColor,
-        })}
+        onPress={() => this.props.navigation.navigate("Inks", { selectedColor })}
       >
         <Text style={styles.defaultBtnTxt}>
           {selectedColor != null ? 'Recommend Inks' : 'Tap the correct color to select'}
@@ -126,8 +124,8 @@ export default class ColorsScreen extends React.Component {
     );
   };
 
-  selectColor = (swatch) => {
-    this.setState({ selectedColor: swatch.color });
+  selectColor = (color) => {
+    this.setState({ selectedColor: color });
   };
 
   renderColors = () => {
@@ -138,12 +136,12 @@ export default class ColorsScreen extends React.Component {
     return (
       <View style={styles.colorList}>
         {swatches.map((swatch, i) => {
-          const isSelected = swatch.color === selectedColor;
           const color = new Color(swatch.color);
+          const isSelected = selectedColor != null && color.hex() === selectedColor.hex();
 
           return (
             <TouchableOpacity key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: color.hex() }}
-              onPress={() => this.selectColor(swatch)}
+              onPress={() => this.selectColor(color)}
             >
               {isSelected && (
                 <View style={styles.selectingIconContainer}>

@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
 import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, View } from "native-base";
-import Color from "color";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -26,16 +25,16 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    const color = new Color(navigation.getParam('color'));
+    const selectedColor = navigation.getParam('selectedColor');
 
     return (
       <Container>
         <Content padder>
           <View style={{ ...styles.textCenter, ...styles.mbSm }}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>HOW TO MIX YOUR COLOR?</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: color.hex() }}></View>
-            <Text>{color.hex()}</Text>
-            <Text>{color.rgb().string().toUpperCase()}</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex() }}></View>
+            <Text>{selectedColor.hex()}</Text>
+            <Text>{selectedColor.rgb().string().toUpperCase()}</Text>
           </View>
           <View style={styles.textCenter}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>HERE IS YOUR FORMULA</Text>
@@ -64,7 +63,7 @@ export default class HomeScreen extends React.Component {
         <Footer>
           <FooterTab>
             <Button full success
-              onPress={() => this.props.navigation.navigate("Contact")}
+              onPress={() => this.props.navigation.navigate("Contact", { selectedColor })}
             >
               <Text style={styles.defaultBtnTxt}>Contact to quote</Text>
             </Button>

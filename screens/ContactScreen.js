@@ -24,6 +24,9 @@ export default class HomeScreen extends React.Component {
   });
 
   render() {
+    const { navigation } = this.props;
+    const selectedColor = navigation.getParam('selectedColor');
+
     return (
       <Container>
         <Content padder>
@@ -43,9 +46,9 @@ export default class HomeScreen extends React.Component {
           </Form>
           <View style={{ ...styles.textCenter, ...styles.mbSm }}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>COLOR YOU WANT TO MIX</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: 'rgb(43,209,85)' }}></View>
-            <Text>#2BD155</Text>
-            <Text>(43,209,85)</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex() }}></View>
+            <Text>{selectedColor.hex()}</Text>
+            <Text>{selectedColor.rgb().string().toUpperCase()}</Text>
           </View>
         </Content>
         <Footer>
