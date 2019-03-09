@@ -1,9 +1,10 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet, AsyncStorage } from 'react-native';
+import { Dimensions, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View, Footer, FooterTab } from "native-base";
 import { getAllSwatches } from "react-native-palette";
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
+import Color from "color";
 
 import constants from "../constants";
 
@@ -32,6 +33,7 @@ export default class ColorsScreen extends React.Component {
     imageUri: undefined,
     dim: {},
     swatches: [],
+    selectedColor: null,
   };
 
   componentDidMount = () => {
@@ -108,43 +110,50 @@ export default class ColorsScreen extends React.Component {
     });
   };
 
-  removeColor = (swatch) => {
-    this.setState((state) => ({
-      swatches: state.swatches.filter((s) => s.color !== swatch.color),
-    }));
-  };
-
   renderInkButton = () => {
-    const { swatches } = this.state;
+    const { selectedColor } = this.state;
     
     return (
-      <Button full success disabled={swatches.length !== 1}
-        onPress={() => this.props.navigation.navigate("Inks")}
+      <Button full success disabled={selectedColor == null}
+        onPress={() => this.props.navigation.navigate("Inks", {
+          color: selectedColor,
+        })}
       >
-        <Text style={styles.defaultBtnTxt}>{swatches.length === 1 ? 'Recommend Inks' : 'Keep only one main color'}</Text>
+        <Text style={styles.defaultBtnTxt}>
+          {selectedColor != null ? 'Recommend Inks' : 'Tap the correct color to select'}
+        </Text>
       </Button>
     );
   };
 
+  selectColor = (swatch) => {
+    this.setState({ selectedColor: swatch.color });
+  };
+
   renderColors = () => {
-    const { dim, swatches } = this.state;
+    const { dim, swatches, selectedColor } = this.state;
     const minItemWidth = 150;
     const itemWidth = dim.width / Math.floor(dim.width / minItemWidth);
 
     return (
       <View style={styles.colorList}>
-        {swatches.map((swatch, i) => (
-          <View key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: swatch.color }}>
-            {swatches.length !== 1 && (
-              <Button small transparent style={styles.colorItemRemoveBtn}
-                onPress={() => this.removeColor(swatch)}
-              >
-                <Icon type="Ionicons" name="close" style={styles.colorItemRemoveTxt} />
-              </Button>
-            )}
-            <Text style={styles.colorItemTitle}>{swatch.color.toUpperCase()}</Text>
-          </View>
-        ), this)}
+        {swatches.map((swatch, i) => {
+          const isSelected = swatch.color === selectedColor;
+          const color = new Color(swatch.color);
+
+          return (
+            <TouchableOpacity key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: color.hex() }}
+              onPress={() => this.selectColor(swatch)}
+            >
+              {isSelected && (
+                <View style={styles.selectingIconContainer}>
+                  <Icon type="FontAwesome" name="check-circle" style={styles.selectedIcon} />
+                </View>
+              )}
+              <Text style={styles.colorItemTitle}>{color.hex()}</Text>
+            </TouchableOpacity>
+          );
+        }, this)}
       </View>
     );
   };
@@ -224,26 +233,20 @@ const styles = StyleSheet.create({
     fontSize: 10,
     padding: 4,
   },
-  colorItemRemoveBtn: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
+  defaultBtnTxt: {
+    color: '#ffffff',
   },
-  colorItemRemoveTxt: {
+  selectingIconContainer: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: 'white',
-    marginLeft: 0,
-    marginRight: 0,
-    paddingLeft: 6,
-    paddingTop: 2,
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
   },
-  defaultBtnTxt: {
-    color: '#ffffff',
+  selectedIcon: {
+    color: '#3F51B5',
   },
 });
