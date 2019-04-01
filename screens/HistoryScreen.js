@@ -220,22 +220,25 @@ export default class HistoryScreen extends React.Component {
           const isSelected = !!selectedImages.find((i) => i.timestamp === image.timestamp);
 
           return (
-            <TouchableOpacity key={image.timestamp} style={imageItemStyle}
-              onPress={() => this.handlePressImage(image)}
-              onLongPress={() => this.handleLongPressImage(image)}
-            >
-              <Image source={{ uri: image.path }} style={styles.imageItemImg} resizeMode="contain" />
-              {isSelecting && !isSelected && (
-                <View style={styles.selectingIconContainer}>
-                  <Icon type="FontAwesome" name="circle-o" style={styles.selectingIcon} />
-                </View>
-              )}
-              {isSelected && (
-                <View style={{ ...styles.selectingIconContainer, backgroundColor: 'white' }}>
-                  <Icon type="FontAwesome" name="check-circle" style={styles.selectedIcon} />
-                </View>
-              )}
-            </TouchableOpacity>
+            <View style={{ alignItems: 'center' }}>
+              <TouchableOpacity key={image.timestamp} style={imageItemStyle}
+                onPress={() => this.handlePressImage(image)}
+                onLongPress={() => this.handleLongPressImage(image)}
+              >
+                <Image source={{ uri: image.path }} style={styles.imageItemImg} resizeMode="contain" />
+                {isSelecting && !isSelected && (
+                  <View style={styles.selectingIconContainer}>
+                    <Icon type="FontAwesome" name="circle-o" style={styles.selectingIcon} />
+                  </View>
+                )}
+                {isSelected && (
+                  <View style={{ ...styles.selectingIconContainer, backgroundColor: 'white' }}>
+                    <Icon type="FontAwesome" name="check-circle" style={styles.selectedIcon} />
+                  </View>
+                )}
+              </TouchableOpacity>
+              <Text>{image.pantone}</Text>
+            </View>
           )
         })}
       </View>

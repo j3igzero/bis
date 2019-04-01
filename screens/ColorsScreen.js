@@ -7,6 +7,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Color from "color";
 
 import constants from "../constants";
+import network from "../lib/network";
 
 export default class ColorsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -34,6 +35,8 @@ export default class ColorsScreen extends React.Component {
     dim: {},
     swatches: [],
     selectedColor: null,
+    color_display: null,
+    image: null
   };
 
   componentDidMount = () => {
@@ -42,9 +45,46 @@ export default class ColorsScreen extends React.Component {
 
     const image = this.props.navigation.getParam('image');
     if (image) {
-      this.onImageUpdate({ imageUri: image.path });
+      // this.props.image = image;
+      this.onImageUpdate(image);
     } else {
       this.openCamera();
+    }
+  };
+
+  componentDidUpdate = async () => {
+    if (this.state.imageUri) {
+      // Get pantone colors from API
+      const { swatches } = this.state;
+
+      let aColors = [];
+      swatches.map((swatch) => {
+        if (swatch.pantone) {
+          return;
+        }
+        const color = new Color(swatch.color);
+        aColors.push(color.hex());
+        swatch.hex = color.hex();
+        return swatch;
+      });
+      if (aColors.length == 0) {
+        return;
+      }
+      // console.log(aColors);
+
+      let response = await network.post('https://bostonindustrialsolutions.com/convert.php', {
+        action: 'rgb-to-pantone',
+        params: {
+          colors: aColors
+        }
+      });
+      const aRes = await response.json();
+      // console.log(aRes);
+      swatches.map((swatch) => {
+        swatch.pantone = aRes[swatch.hex];
+        return swatch;
+      });
+      this.setState({ swatches });
     }
   };
 
@@ -58,20 +98,23 @@ export default class ColorsScreen extends React.Component {
     });
   };
 
-  openCamera = () => {
-    ImagePicker.openCamera({
-      cropperToolbarTitle: 'Select Area',
-      width: 2000,
-      height: 2000,
-      cropping: true
-    }).then((image) => {
-      this.saveImage(image);
-      this.onImageUpdate({ imageUri: image.path })
-    }).catch((error) => {
+  openCamera = async () => {
+
+    try {
+      const image = await ImagePicker.openCamera({
+        cropperToolbarTitle: 'Select Area',
+        width: 2000,
+        height: 2000,
+        cropping: true
+      });
+      // this.saveImage(image);
+      this.onImageUpdate(image)
+    }
+    catch (error) {
       if (error.code !== 'E_PICKER_CANCELLED') {
         console.warn(error);
       }
-    });
+    }
   };
 
   saveImage = (image) => {
@@ -92,30 +135,35 @@ export default class ColorsScreen extends React.Component {
     });
   };
 
-  onImageUpdate = ({ imageUri }) => {
-    this.setState({ imageUri }, () => {
-      if (!this.state.imageUri) {
-        return;
+  onImageUpdate = (image) => {
+
+    const imageUri = image.path;
+    if (!imageUri) {
+      return;
+    }
+    getAllSwatches({}, imageUri.substr(8), (error, swatches) => {
+      if (error) {
+        console.error(error);
+      } 
+      else {
+        swatches.sort((a, b) => {
+          return b.population - a.population;
+        });
+        this.setState({ imageUri, swatches, image });
       }
-      getAllSwatches({}, this.state.imageUri.substr(8), (error, swatches) => {
-        if (error) {
-          console.error(error);
-        } else {
-          swatches.sort((a, b) => {
-            return b.population - a.population;
-          });
-          this.setState({ swatches });
-        }
-      });
     });
   };
 
   renderInkButton = () => {
-    const { selectedColor } = this.state;
+    const { selectedColor, color_display } = this.state;
     
     return (
       <Button full success disabled={selectedColor == null}
-        onPress={() => this.props.navigation.navigate("Inks", { selectedColor })}
+        onPress={() => {
+          const image = {...this.state.image, 'pantone': color_display};
+          this.saveImage(image);
+          this.props.navigation.navigate("Inks", { selectedColor });
+        }}
       >
         <Text style={styles.defaultBtnTxt}>
           {selectedColor != null ? 'Recommend Inks' : 'Tap the correct color to select'}
@@ -124,8 +172,8 @@ export default class ColorsScreen extends React.Component {
     );
   };
 
-  selectColor = (color) => {
-    this.setState({ selectedColor: color });
+  selectColor = (color, color_display) => {
+    this.setState({ selectedColor: color, color_display });
   };
 
   renderColors = () => {
@@ -138,17 +186,18 @@ export default class ColorsScreen extends React.Component {
         {swatches.map((swatch, i) => {
           const color = new Color(swatch.color);
           const isSelected = selectedColor != null && color.hex() === selectedColor.hex();
+          const color_display = swatch.pantone ? swatch.pantone : null;
 
           return (
             <TouchableOpacity key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: color.hex() }}
-              onPress={() => this.selectColor(color)}
+              onPress={() => this.selectColor(color, color_display)}
             >
               {isSelected && (
                 <View style={styles.selectingIconContainer}>
                   <Icon type="FontAwesome" name="check-circle" style={styles.selectedIcon} />
                 </View>
               )}
-              <Text style={styles.colorItemTitle}>{color.hex()}</Text>
+              <Text style={styles.colorItemTitle}>{color_display || 'Analyzing...'}</Text>
             </TouchableOpacity>
           );
         }, this)}
@@ -157,6 +206,7 @@ export default class ColorsScreen extends React.Component {
   };
 
   render() {
+
     return (
       <Container>
         <Content>
