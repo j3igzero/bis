@@ -160,7 +160,7 @@ export default class ColorsScreen extends React.Component {
     return (
       <Button full success disabled={selectedColor == null}
         onPress={() => {
-          const image = {...this.state.image, 'pantone': color_display};
+          const image = {...this.state.image, selectedColor: {pantone: color_display, hex: selectedColor.hex()}};
           this.saveImage(image);
           this.props.navigation.navigate("Inks", { selectedColor });
         }}

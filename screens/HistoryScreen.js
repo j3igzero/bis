@@ -237,7 +237,7 @@ export default class HistoryScreen extends React.Component {
                   </View>
                 )}
               </TouchableOpacity>
-              <Text>{image.pantone}</Text>
+              <Text>{image.selectedColor.pantone}</Text>
             </View>
           )
         })}
