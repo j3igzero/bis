@@ -203,19 +203,22 @@ export default class HistoryScreen extends React.Component {
     const margin = 8;
     const itemsPerRow = Math.floor(width / (minItemWidth + margin));
     const itemWidth = (width - ((itemsPerRow + 1) * margin)) / itemsPerRow;
-    const imageItemStyle = {
-      ...styles.imageItem,
+    const itemStyle = {
       width: itemWidth,
-      height: itemWidth,
       marginRight: margin,
       marginBottom: margin,
+    };
+    const imageItemStyle = {
+      ...styles.imageItem,
+      ...itemStyle,
+      height: itemWidth,
     };
 
     const { selectedImages } = this.state;
     const isSelecting = !!selectedImages.length;
 
     return (
-      <View style={styles.imageList}>
+      <View style={styles.imageList}> 
         {images.map((image) => {
           const isSelected = !!selectedImages.find((i) => i.timestamp === image.timestamp);
 
@@ -237,7 +240,9 @@ export default class HistoryScreen extends React.Component {
                   </View>
                 )}
               </TouchableOpacity>
-              <Text>{image.selectedColor.pantone}</Text>
+              <View style={{ ...itemStyle, height: itemWidth/4, backgroundColor: image.selectedColor.hex }} >
+                <Text style={styles.itemPantone}>{image.selectedColor.pantone}</Text>
+              </View>
             </View>
           )
         })}
@@ -319,5 +324,13 @@ const styles = StyleSheet.create({
   },
   selectedIcon: {
     color: '#3F51B5',
+  },
+  itemPantone: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    color: '#ffffff',
+    fontSize: 12,
+    padding: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 });

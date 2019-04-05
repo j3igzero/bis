@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
 import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, View } from "native-base";
+import Color from "color";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -25,7 +26,8 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    const selectedColor = navigation.getParam('selectedColor');
+    let selectedColor = navigation.getParam('selectedColor');
+    selectedColor = Color(selectedColor.hex);
 
     return (
       <Container>

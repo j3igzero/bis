@@ -7,6 +7,7 @@ import HistoryScreen from "../screens/HistoryScreen";
 import HomeScreen from "../screens/HomeScreen";
 import InksScreen from "../screens/InksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import PantoneScreen from "../screens/PantoneScreen";
 
 const AppNavigator = createStackNavigator(
     {
@@ -17,6 +18,7 @@ const AppNavigator = createStackNavigator(
         Home: HomeScreen,
         Inks: InksScreen,
         Settings: SettingsScreen,
+        Pantone: PantoneScreen,
     },
     {
         initialRouteName: "Home",

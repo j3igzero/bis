@@ -1,14 +1,13 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Dimensions, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View, Footer, FooterTab } from "native-base";
-import { getAllSwatches } from "react-native-palette";
 import LinearGradient from 'react-native-linear-gradient';
-import ImagePicker from 'react-native-image-crop-picker';
 import Color from "color";
 
 import constants from "../constants";
+import convert from '../lib/convert';
 
-export default class ColorsScreen extends React.Component {
+export default class PantoneScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <Header>
@@ -18,7 +17,7 @@ export default class ColorsScreen extends React.Component {
           </Button>
         </Left>
         <Body>
-          <Title>Scan Color</Title>
+          <Title>Scan Pantone Color</Title>
         </Body>
         <Right>
           <Button transparent onPress={() => navigation.navigate("Settings")}>
@@ -30,23 +29,21 @@ export default class ColorsScreen extends React.Component {
   });
 
   state = {
-    imageUri: undefined,
     dim: {},
     swatches: [],
     selectedColor: null,
-    image: null
+    mainColor: null
   };
 
   componentDidMount = () => {
     Dimensions.addEventListener('change', this.onDimChange);
     this.onDimChange();
 
-    const image = this.props.navigation.getParam('image');
-    if (image) {
-      this.onImageUpdate(image);
-    } else {
-      this.openCamera();
-    }
+    const hex = this.props.hex || this.props.navigation.getParam('hex') || '#ffffff';   // #4fab2a
+    const swatches = convert.getPMSList(hex.substr(1), 32);
+    // console.log(swatches);
+
+    this.setState({swatches, mainColor: hex});
   };
 
   componentWillUnmount = () => {
@@ -59,61 +56,45 @@ export default class ColorsScreen extends React.Component {
     });
   };
 
-  openCamera = async () => {
-
-    try {
-      const image = await ImagePicker.openCamera({
-        cropperToolbarTitle: 'Select Area',
-        width: 2000,
-        height: 2000,
-        cropping: true
-      });
-      this.onImageUpdate(image)
-    }
-    catch (error) {
-      if (error.code !== 'E_PICKER_CANCELLED') {
-        console.warn(error);
-      }
-    }
-  };
-
-  onImageUpdate = (image) => {
-
-    const imageUri = image.path;
-    if (!imageUri) {
-      return;
-    }
-    getAllSwatches({}, imageUri.substr(8), (error, swatches) => {
+  saveImage = (image) => {
+    AsyncStorage.getItem(constants.IMAGES_STORAGE_KEY, (error, result) => {
       if (error) {
-        console.error(error);
-      } 
-      else {
-        swatches.sort((a, b) => {
-          return b.population - a.population;
-        });
-        this.setState({ imageUri, swatches, image });
+        console.warn('Get images error', error);
       }
+      let images = result ? JSON.parse(result) : [];
+      images.push({
+        ...image,
+        timestamp: +new Date(),
+      });
+      AsyncStorage.setItem(constants.IMAGES_STORAGE_KEY, JSON.stringify(images), (error) => {
+        if (error) {
+          console.warn('Save images error', error);
+        }
+      });
     });
   };
 
-  renderPantoneButton = () => {
+  renderInkButton = () => {
     const { selectedColor } = this.state;
     
     return (
       <Button full success disabled={selectedColor == null}
         onPress={() => {
-          this.props.navigation.navigate("Pantone", { hex: selectedColor.hex(), image: this.state.image });
+          const image = {...this.props.navigation.getParam('image'), selectedColor};
+          this.saveImage(image);
+          this.props.navigation.navigate("Inks", { selectedColor });
         }}
       >
         <Text style={styles.defaultBtnTxt}>
-          {selectedColor != null ? 'Go to pantone color list' : 'Tap the correct color to analyze'}
+          {selectedColor != null ? 'Recommend Inks' : 'Tap the correct color to select'}
         </Text>
       </Button>
     );
   };
 
-  selectColor = (color) => {
-    this.setState({ selectedColor: color });
+  selectColor = (pantone, hex) => {
+    const selectedColor = {pantone, hex};
+    this.setState({ selectedColor });
   };
 
   renderColors = () => {
@@ -122,25 +103,26 @@ export default class ColorsScreen extends React.Component {
     const itemWidth = dim.width / Math.floor(dim.width / minItemWidth);
 
     return (
-      <View style={styles.colorList}>
-        {swatches.map((swatch, i) => {
-          const color = new Color(swatch.color);
-          const isSelected = selectedColor != null && color.hex() === selectedColor.hex();
-          const color_display = color.hex();
+      <View style={swatches.length ? styles.colorList : {alignItems: 'center', justifyContent: 'center'} }>
+        {swatches.length ? (swatches.map((pantone, i) => {
+          const hex = '#'+ convert.PMS2RGB(pantone);
+          const isSelected = selectedColor != null && hex === selectedColor.hex;
 
           return (
-            <TouchableOpacity key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: color.hex() }}
-              onPress={() => this.selectColor(color)}
+            <TouchableOpacity key={i} style={{ ...styles.colorItem, width: itemWidth, backgroundColor: hex }}
+              onPress={() => this.selectColor(pantone, hex)}
             >
               {isSelected && (
                 <View style={styles.selectingIconContainer}>
                   <Icon type="FontAwesome" name="check-circle" style={styles.selectedIcon} />
                 </View>
               )}
-              <Text style={styles.colorItemTitle}>{color_display}</Text>
+              <Text style={styles.colorItemTitle}>{pantone}</Text>
             </TouchableOpacity>
           );
-        }, this)}
+        }, this)) : (
+          <Text>No PMS color</Text>
+        )}
       </View>
     );
   };
@@ -151,21 +133,18 @@ export default class ColorsScreen extends React.Component {
       <Container>
         <Content>
           <LinearGradient colors={['#3F51B5', '#5cb85c']} style={styles.imageContainer}>
-            {this.state.imageUri ? (
-              <Image source={{ uri: this.state.imageUri }} style={styles.image} resizeMode="contain" />
+            {this.state.mainColor ? (
+              <View style={{ ...styles.image, backgroundColor: this.state.mainColor }} />
             ) : (
               <Text style={styles.imagePlaceholderTxt}>Take a photo to analyze colors</Text>
             )}
-            <Button bordered style={styles.cameraBtn} onPress={() => this.openCamera()}>
-              <Icon type="FontAwesome" name="camera" />
-            </Button>
           </LinearGradient>
-          {this.state.imageUri && this.renderColors()}
+          {this.state.mainColor && this.renderColors()}
         </Content>
         {!!this.state.swatches.length && (
           <Footer>
             <FooterTab>
-              {this.renderPantoneButton()}
+              {this.renderInkButton()}
             </FooterTab>
           </Footer>
         )}
