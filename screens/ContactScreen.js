@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
 import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, Form, Item, Label, Input, View } from "native-base";
+import Color from "color";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -26,6 +27,7 @@ export default class HomeScreen extends React.Component {
   render() {
     const { navigation } = this.props;
     const selectedColor = navigation.getParam('selectedColor');
+    const oColor = Color(selectedColor.hex);
 
     return (
       <Container>
@@ -46,9 +48,9 @@ export default class HomeScreen extends React.Component {
           </Form>
           <View style={{ ...styles.textCenter, ...styles.mbSm }}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>COLOR YOU WANT TO MIX</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex() }}></View>
-            <Text>{selectedColor.hex()}</Text>
-            <Text>{selectedColor.rgb().string().toUpperCase()}</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex }}></View>
+            <Text>{selectedColor.pantone}</Text>
+            <Text>{oColor.rgb().string().toUpperCase()}</Text>
           </View>
         </Content>
         <Footer>

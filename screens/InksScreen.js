@@ -26,17 +26,17 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    let selectedColor = navigation.getParam('selectedColor');
-    selectedColor = Color(selectedColor.hex);
+    const selectedColor = navigation.getParam('selectedColor');
+    const oColor = Color(selectedColor.hex);
 
     return (
       <Container>
         <Content padder>
           <View style={{ ...styles.textCenter, ...styles.mbSm }}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>HOW TO MIX YOUR COLOR?</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex() }}></View>
-            <Text>{selectedColor.hex()}</Text>
-            <Text>{selectedColor.rgb().string().toUpperCase()}</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: oColor.hex() }}></View>
+            <Text>{selectedColor.pantone}</Text>
+            <Text>{oColor.rgb().string().toUpperCase()}</Text>
           </View>
           <View style={styles.textCenter}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>HERE IS YOUR FORMULA</Text>
