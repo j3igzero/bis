@@ -16,7 +16,11 @@
     "react-native-image-crop-picker": "0.21.3",
     "react-native-linear-gradient": "2.5.3",
     "react-native-palette": "0.3.2",
-    "react-navigation": "3.3.2"
+    "react-navigation": "3.3.2",
+    "react-redux": "6.0.1",
+    "redux": "^4.0.1",
+    "redux-persist": "4.10.2",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
