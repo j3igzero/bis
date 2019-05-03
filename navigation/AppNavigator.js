@@ -9,6 +9,11 @@ import InksScreen from "../screens/InksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import PantoneScreen from "../screens/PantoneScreen";
 
+import GuestScreen from "../screens/GuestScreen";
+import ColorProfileScreen from "../screens/ColorProfileScreen";
+import FormulaScreen from "../screens/FormulaScreen";
+import SearchScreen from "../screens/SearchScreen";
+
 const AppNavigator = createStackNavigator(
     {
         Colors: ColorsScreen,
@@ -19,9 +24,19 @@ const AppNavigator = createStackNavigator(
         Inks: InksScreen,
         Settings: SettingsScreen,
         Pantone: PantoneScreen,
+
+        Guest: GuestScreen,
+        ColorProfile: ColorProfileScreen,
+        Formul: FormulaScreen,
+        Search: SearchScreen,
     },
     {
-        initialRouteName: "Home",
+        // initialRouteName: "Search",
+        // initialRouteName: "Formul",
+        // initialRouteName: "ColorProfile",
+        // initialRouteName: "Inks",
+        initialRouteName: "Guest",
+        // initialRouteName: "Home",
     }
 );
 
