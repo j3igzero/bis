@@ -1,4 +1,4 @@
-package com.bostonindustrialsolutions;
+package com.boston;
 
 import android.app.Application;
 
