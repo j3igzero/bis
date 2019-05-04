@@ -36,15 +36,19 @@ export default class GuestScreen extends Component {
           <View style={styles.actionList}>
             <View style={styles.actionItem}>
               <Button transparent={true} style={styles.actionButton}
-                onPress={() => {}}
+                onPress={() => { }}
               >
-                <Icon type="Ionicons" name="md-color-palette" style={styles.actionIcon} />
+                <Image
+                  style={{ width: 40, height: 40 }}
+                  source={require('../lib/Images/color_picker.png')}
+                />
+                {/* <Icon type="Ionicons" name="md-color-palette" style={styles.actionIcon} /> */}
               </Button>
               <Text>Color Mixing</Text>
             </View>
             <View style={styles.actionItem}>
               <Button transparent={true} style={styles.actionButton}
-                onPress={() => {}}
+                onPress={() => { }}
               >
                 <Icon type="FontAwesome" name="shopping-cart" style={styles.actionIcon} />
               </Button>

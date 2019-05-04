@@ -24,7 +24,8 @@ export default class HomeScreen extends Component {
         <Content padder>
           <View style={styles.center}>
             <Image
-              source={require('../lib/Images/icon.png')}
+              style={{ width: 60, height: 60 }}
+              source={require('../lib/Images/color_picker.png')}
             />
             <Text style={{ fontWeight: 'bold', marginVertical: 10 }}>
               Ink Color matching assistant
