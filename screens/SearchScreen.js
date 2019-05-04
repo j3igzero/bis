@@ -3,8 +3,11 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Container, Content, View, Text, Icon, Button, Input, Header, Body, Left, Right, Title } from 'native-base';
 import { AppStyles } from '../lib/AppStyle';
 import Autocomplete from '../lib/AutoComplete';
+import { connect } from 'react-redux';
 
-export default class SettingsScreen extends React.Component {
+import { actionCreators } from '../redux';
+
+class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: <Header
       noShadow
@@ -16,7 +19,7 @@ export default class SettingsScreen extends React.Component {
         </Button>
       </Left>
       <Body>
-        <Title>Search ...</Title>
+        <Title>Search...</Title>
       </Body>
     </Header>
   });
@@ -26,26 +29,23 @@ export default class SettingsScreen extends React.Component {
     this.state = {
       query: '',
       datas: [
-        { title: 'Black' },
-        { title: 'Blue' },
-        { title: 'Brown' },
-        { title: 'CadetBlue' },
-        { title: 'Chartreuse' },
-        { title: 'Chocolate' },
-        { title: 'DarkBlue' },
-        { title: 'DarkCyan' },
-        { title: 'DarkGray' },
-        { title: 'DarkGreen' },
+        {title: 'PMS Yellow C'},
+        {title: 'PMS 106 C'},
+        {title: 'PMS 108 C'},
+        {title: 'PMS 123 C'},
+        {title: 'PMS Bright Red C'},
+        {title: 'PMS Rubine Red C'},
+        {title: 'PMS 186 C'},
+        {title: 'PMS 348 C'},
+        {title: 'PMS 300 C'},
       ],
-      dataTrending: [
-        { title: 'Black' },
-        { title: 'CadetBlue' },
-        { title: 'DarkGreen' },
-      ]
     }
   }
+
   _filterData(query) {
-    const { datas, dataTrending } = this.state;
+    const { datas } = this.state;
+    const { dataTrending } = this.props;
+
     if (query === '') {
       return dataTrending;
     }
@@ -55,8 +55,11 @@ export default class SettingsScreen extends React.Component {
   _keyExtractor = (item, index) => item.title;
 
   _gotoPage(value) {
-    const { navigation } = this.props;
+    const { navigation, dispatch } = this.props;
+    dispatch(actionCreators.updateSearchQuery(value));
+        
     navigation.navigate('ColorProfile');
+
     this.setState({
       query: value
     })
@@ -140,6 +143,14 @@ export default class SettingsScreen extends React.Component {
     );
   }
 }
+
+const mapState = (state) => {
+  return {
+    dataTrending: state.search.dataTrending,
+  };
+}
+export default connect(mapState)(SettingsScreen);
+
 const styles = StyleSheet.create({
   overSearch: {
     // flexDirection: 'row',

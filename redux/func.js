@@ -12,3 +12,5 @@ export const buildPMSList = (formula_data = {}) => {
     return { name, full_name, short_name, hex, rgb };
   });
 }
+
+// {name: 'PMS 348', full_name: 'PMS 348 C', short_name: '348 C', hex: '#9d2235', rgb: 'rgb(157, 34, 53)'}

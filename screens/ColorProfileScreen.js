@@ -7,10 +7,14 @@ import {
   Container, Content, Header, Body, Title, Right, Button,
   Icon, Left, View, Text, Input, Picker
 } from "native-base";
+import { connect } from 'react-redux';
+
 import { AppStyles } from '../lib/AppStyle';
 import Autocomplete from '../lib/AutoComplete';
+
+
 const { width } = Dimensions.get('screen');
-export default class ColorProfileScreen extends React.Component {
+class ColorProfileScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <View style={styles.overLogo}>
@@ -23,6 +27,8 @@ export default class ColorProfileScreen extends React.Component {
   constructor() {
     super();
     this.state = {
+      inkManufacture: null,
+      inkSeries: null,
       query: '',
       films: [
         { title: 'FloralWhite' },
@@ -36,6 +42,14 @@ export default class ColorProfileScreen extends React.Component {
       ]
     }
   }
+
+  selectInkManufacture = (value: string) => {
+    this.setState({ inkManufacture: value });
+  };
+  selectInkSeries = (value: string) => {
+    this.setState({ inkSeries: value });
+  };
+
   _filterData(query) {
     if (query === '') {
       return [];
@@ -52,7 +66,9 @@ export default class ColorProfileScreen extends React.Component {
     navigation.navigate(page);
   }
   render() {
-    const { query } = this.state;
+    const { query, inkManufacture, inkSeries } = this.state;
+    const { search } = this.props;
+
     const data = this._filterData(query);
     const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
     return (
@@ -65,6 +81,7 @@ export default class ColorProfileScreen extends React.Component {
                 placeholder="Search..."
                 placeholderTextColor='#333'
                 onFocus={() => this._gotoPage('Search')}
+                value={search.currentQuery}
               />
               <Icon type="FontAwesome" name="paperclip" style={AppStyles.iconInput} />
               <Icon type="FontAwesome" name="camera" style={[AppStyles.iconInput, { color: AppStyles.Color.icon, marginLeft: 8 }]} />
@@ -78,7 +95,7 @@ export default class ColorProfileScreen extends React.Component {
               </View>
             </View>
             <View>
-              <Text style={AppStyles.textLink}>Pantone Formula Guide - $160.00 | formula</Text>
+              <Text style={AppStyles.textLink}>Pantone Formula Guide - $160.00 | Page: 47</Text>
             </View>
             <View style={[AppStyles.line, { marginTop: 25, }]}>
               <Text style={{ paddingTop: 15, paddingBottom: 10, color: '#9e9e9e' }}>Select Ink series to get <Text>Color matching formula</Text></Text>
@@ -88,7 +105,11 @@ export default class ColorProfileScreen extends React.Component {
               {/* <Icon type="FontAwesome" name="angle-down"
                 style={{ paddingHorizontal: 15, borderRightWidth: 1, borderRightColor: '#000' }}
               /> */}
-              <Picker mode="dropdown" note>
+              <Picker mode="dropdown" 
+                selectedValue={inkManufacture}
+                onValueChange={this.selectInkManufacture}
+              >
+                <Picker.Item label="Select Ink manufacture / distributor" value={null} />
                 <Picker.Item label="Bottom Industrial Solutions, Inc" value="key0" />
               </Picker>
             </View>
@@ -96,7 +117,11 @@ export default class ColorProfileScreen extends React.Component {
               {/* <Icon type="FontAwesome" name="angle-down"
                 style={{ paddingHorizontal: 15, borderRightWidth: 1, borderRightColor: '#000' }}
               /> */}
-              <Picker mode="dropdown" note>
+              <Picker mode="dropdown" 
+                selectedValue={inkSeries}
+                onValueChange={this.selectInkSeries}
+              >
+                <Picker.Item label="Select Ink series" value={null} />
                 <Picker.Item label="SE Series" value="key0" />
                 <Picker.Item label="MG Series" value="key1" />
                 <Picker.Item label="Nxt Series" value="key2" />
@@ -105,7 +130,7 @@ export default class ColorProfileScreen extends React.Component {
             <View style={styles.footerBottom}>
               <Button full transparent={true} style={[AppStyles.MainButton, { marginVertical: 10 }]}
                 onPress={() => this._gotoPage('Formul')}>
-                <Text style={AppStyles.TextButton}>GET COLOR MATCHING FORMUILA</Text>
+                <Text style={AppStyles.TextButton}>GET COLOR MATCHING FORMULA</Text>
               </Button>
               <View style={{ flexDirection: 'row' }}>
                 <Left>
@@ -125,6 +150,11 @@ export default class ColorProfileScreen extends React.Component {
     );
   }
 }
+
+const mapState = state => ({
+  search: state.search,
+});
+export default connect(mapState)(ColorProfileScreen);
 
 const styles = StyleSheet.create({
   // Thanh Nguyen

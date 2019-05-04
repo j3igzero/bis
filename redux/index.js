@@ -4,6 +4,7 @@ import { buildPMSList } from './func';
 export const types = {
   GET_COLOR_FORMULA_REQUEST: 'GET_COLOR_FORMULA_REQUEST',
   GET_COLOR_FORMULA_RESPONSE: 'GET_COLOR_FORMULA_RESPONSE',
+  UPDATE_SEARCH_QUERY: 'UPDATE_SEARCH_QUERY',
 };
 
 // Action creators
@@ -28,6 +29,7 @@ export const actionCreators = {
       dispatch(getColorFormulaResponse(e, true));
     }
   },
+  updateSearchQuery: query => ({ type: types.UPDATE_SEARCH_QUERY, payload: query }),
 
 };
 
@@ -38,18 +40,15 @@ const initialState = {
   errorMessage: '',
 
   search: {
-    trending_list: [
-      {text: 'PMS 348', count: 1299},
-      {text: 'Silicone inks', count: 967},
-      {text: 'Mixing ratios', count: 551},
+    currentQuery: '',
+    dataTrending: [
+      {title: 'PMS 348', count: 1299},
+      {title: 'Silicone inks', count: 967},
+      {title: 'Mixing ratios', count: 551},
     ],
-    pms_list: [
-      {name: 'PMS 348', full_name: 'PMS 348 C', short_name: '348 C', hex: '#9d2235', rgb: 'rgb(157, 34, 53)'},
-      {name: 'PMS 123', full_name: 'PMS 123 C', short_name: '123 C', hex: '#9d2235', rgb: 'rgb(157, 34, 53)'},
-      {name: 'PMS 201', full_name: 'PMS 201 C', short_name: '201 C', hex: '#9d2235', rgb: 'rgb(157, 34, 53)'},
-    ]
   },
   formula: {
+    currentColor: null,
     data: {
       "123 C": [
         {"name": "310 White", "hex": "#FFFFFF", "percent": "18"},
@@ -84,13 +83,15 @@ export const reducer = (state = initialState, action) => {
         console.log('Cannot get color formula list!');
         return {...state, loading: false, error, errorMessage: 'Cannot get color formula list!'};
       }
-      let pms_list = buildPMSList(payload);
+      // let pms_list = buildPMSList(payload);
 
       return {...state, 
         loading: false, 
-        search: {...search, pms_list}, 
         formula: {...formula, data: payload}
       };
+    }
+    case types.UPDATE_SEARCH_QUERY: {
+      return {...state, search: {...search, currentQuery: payload}};
     }
   }
 

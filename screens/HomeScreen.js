@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import { Platform, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import { Container, Content, Header, Body, Footer, Title, Right, Button, Icon, Left, View, Text, Input } from "native-base";
+import { connect } from 'react-redux';
+import { actionCreators } from '../redux';
+
 import { AppStyles } from '../lib/AppStyle';
-export default class HomeScreen extends Component {
+
+
+class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <View style={styles.overLogo}>
@@ -12,6 +17,10 @@ export default class HomeScreen extends Component {
       </View>
     )
   });
+
+  componentWillMount() {
+    this.props.dispatch(actionCreators.getColorFormula);
+  }
 
   _gotoPage(name) {
     const { navigation } = this.props;
@@ -38,7 +47,7 @@ export default class HomeScreen extends Component {
             <View style={AppStyles.overInput}>
               <Icon type="FontAwesome" name="search" style={AppStyles.iconInput} />
               <Input style={styles.input}
-                placeholder="Search..."
+                placeholder="Search or take a photo..."
                 placeholderTextColor='#333'
                 onFocus={() => this._gotoPage('Search')}
               />
@@ -46,7 +55,7 @@ export default class HomeScreen extends Component {
               <Icon type="FontAwesome" name="camera" style={[AppStyles.iconInput, { color: AppStyles.Color.Main, marginLeft: 8 }]} />
             </View>
             <Text style={{ fontSize: 24, marginVertical: 10 }}>Or</Text>
-            <Text style={{ color: AppStyles.Color.textGray, fontSize: 14, marginBottom: 10 }}>Take a photo of a color on an item   you'd like to match</Text>
+            <Text style={{ color: AppStyles.Color.textGray, fontSize: 14, marginBottom: 10 }}>Take a photo of a color on an item you'd like to match</Text>
             <Icon type="FontAwesome" name="camera" style={styles.actionIcon}
               onPress={() => this._gotoPage('Colors')} />
             <Icon type="FontAwesome" name="history" style={styles.actionIcon}
@@ -58,6 +67,8 @@ export default class HomeScreen extends Component {
     );
   }
 }
+
+export default connect()(HomeScreen);
 
 const styles = StyleSheet.create({
   actionIcon: {
