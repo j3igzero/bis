@@ -4,9 +4,14 @@ import {
   Container, Content, Header, Body, Title, Right, Button,
   Icon, Left, View, Text, Input, Picker
 } from "native-base";
+import { connect } from 'react-redux';
+import { actionCreators } from '../redux';
+
 const { width } = Dimensions.get('screen');
 import { AppStyles } from '../lib/AppStyle';
-export default class FormulaScreen extends React.Component {
+import { buildPMSData } from '../redux/func';
+
+class FormulaScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <View style={styles.overLogo}>
@@ -17,24 +22,75 @@ export default class FormulaScreen extends React.Component {
     )
   });
 
+  componentDidMount() {
+    const { formulaData, dispatch } = this.props;
+    if (!formulaData) {
+      dispatch(actionCreators.getColorFormula);
+    }
+  }
+
+  renderColorItems = ({ name, hex, percent }, i) => {
+    return (
+      <View style={styles.rowColor}>
+        <Text>{name}</Text>
+        <View style={[styles.rowItem, { backgroundColor: hex }]}>
+          <Text style={AppStyles.TextButton}>{percent}%</Text>
+        </View>
+        <Text>{percent*10}</Text>
+      </View>
+    );
+  };
+
+  renderFormula() {
+    const { formulaData } = this.props;
+    return (
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        {!formulaData ? 
+          (<Text>No formula found!</Text>) : 
+          formulaData.map(this.renderColorItems)
+        }
+
+      </View>
+    );
+  }
+
+  _gotoPage(page = 'Home') {
+    const { navigation } = this.props;
+    navigation.navigate(page);
+  }
+
   render() {
+    const { currentColor, data } = this.props;
+
+    if (!data) {
+      return (
+        <Container>
+          <Content padder>
+            <View style={{}}>
+              <Text style={{ color: '#bdbdbd', fontSize: 14 }}>No data found!</Text>
+            </View>
+          </Content>
+        </Container>
+      );
+    }
+
     return (
       <Container>
         <Content padder>
           <View style={{}}>
-            <Text style={{ color: '#bdbdbd', fontSize: 14 }}>SE SERIES  CUSTOM COLOR FORMULA | PMS 201</Text>
+            <Text style={{ color: '#bdbdbd', fontSize: 14 }}>SE SERIES CUSTOM COLOR FORMULA | {data.name}</Text>
           </View>
 
           <View style={{
             flexDirection: 'row',
             marginVertical: 15, alignItems: 'center', justifyContent: 'center'
           }}>
-            <View style={{ width: width / 2, height: 80, backgroundColor: '#bf360c', alignItems: 'center', borderWidth: 1, borderColor: '#e0e0e0', }}>
+            <View style={{ width: width / 2, height: 80, backgroundColor: data.hex, alignItems: 'center', borderWidth: 1, borderColor: '#e0e0e0', }}>
             </View>
           </View>
 
           <View>
-            <Text style={{ color: 'red', fontStyle: 'italic' }}>Caution! <Text style={{ color: '#2196f3', fontStyle: 'italic' }}> Color Match 10 grams first   to test the accuracy offormula before full mixing</Text></Text>
+            <Text style={{ color: 'red', fontStyle: 'italic' }}>Caution! <Text style={{ color: '#2196f3', fontStyle: 'italic' }}> Color Match 10 grams first to test the accuracy of formula before full mixing</Text></Text>
           </View>
           <View style={[AppStyles.line, { marginTop: 10 }]}></View>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 15 }}>
@@ -51,34 +107,12 @@ export default class FormulaScreen extends React.Component {
               />
             </View>
           </View>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            <View style={styles.rowColor}>
-              <Text>351 RUBINE</Text>
-              <View style={[styles.rowItem, { backgroundColor: '#bf360c' }]}>
-                <Text style={AppStyles.TextButton}>90%</Text>
-              </View>
-              <Text>900</Text>
-            </View>
-
-            <View style={styles.rowColor}>
-              <Text>315 YELLOW</Text>
-              <View style={[styles.rowItem, { backgroundColor: '#fdd835' }]}>
-                <Text style={AppStyles.TextButton}>9%</Text>
-              </View>
-              <Text>90</Text>
-            </View>
-
-            <View style={styles.rowColor}>
-              <Text>300 BLACK</Text>
-              <View style={[styles.rowItem, { backgroundColor: 'black' }]}>
-                <Text style={AppStyles.TextButton}>1%</Text>
-              </View>
-              <Text>10</Text>
-            </View>
-          </View>
+          {this.renderFormula()}
 
           <View style={styles.footerBottom}>
-            <Button full transparent={true} style={[AppStyles.MainButton, { marginVertical: 10 }]}>
+            <Button full transparent={true} style={[AppStyles.MainButton, { marginVertical: 10 }]}
+              onPress={() => this._gotoPage('Contact')}
+            >
               <Text style={AppStyles.TextButton}>GET QUOTE</Text>
             </Button>
             <View style={{ flexDirection: 'row' }}>
@@ -95,6 +129,21 @@ export default class FormulaScreen extends React.Component {
     );
   }
 }
+
+const mapState = state => {
+  // console.log(state);
+  const { currentColor, data } = state.formula;
+
+  if (!!currentColor) {
+    return {
+      currentColor,
+      data: buildPMSData(currentColor),
+      formulaData: data[currentColor],
+    };
+  }
+  return { currentColor };
+};
+export default connect(mapState)(FormulaScreen);
 
 const styles = StyleSheet.create({
   // Thanh Nguyen
@@ -115,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rowItem: {
-    width: width / 4,
+    width: width / 5,
     height: width / 7,
     marginVertical: 10,
     borderWidth: 1,

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { AppStyles } from '../lib/AppStyle';
 import Autocomplete from '../lib/AutoComplete';
-
+import { actionCreators } from '../redux';
 
 const { width } = Dimensions.get('screen');
 class ColorProfileScreen extends React.Component {
@@ -42,6 +42,14 @@ class ColorProfileScreen extends React.Component {
       ]
     }
   }
+
+  componentWillMount() {
+    this.props.dispatch(actionCreators.updateFormulaColor('123 C'));
+  }
+
+  onGetColorFormula = () => {
+    this._gotoPage('Formul');
+  };
 
   selectInkManufacture = (value: string) => {
     this.setState({ inkManufacture: value });
@@ -129,7 +137,7 @@ class ColorProfileScreen extends React.Component {
             </View>
             <View style={styles.footerBottom}>
               <Button full transparent={true} style={[AppStyles.MainButton, { marginVertical: 10 }]}
-                onPress={() => this._gotoPage('Formul')}>
+                onPress={this.onGetColorFormula}>
                 <Text style={AppStyles.TextButton}>GET COLOR MATCHING FORMULA</Text>
               </Button>
               <View style={{ flexDirection: 'row' }}>

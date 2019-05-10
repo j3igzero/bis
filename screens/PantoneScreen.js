@@ -3,11 +3,13 @@ import { Dimensions, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'r
 import { Left, Button, Icon, Body, Title, Right, Header, Container, Content, Text, View, Footer, FooterTab } from "native-base";
 import LinearGradient from 'react-native-linear-gradient';
 import Color from "color";
+import { connect } from 'react-redux';
 
+import { actionCreators } from '../redux';
 import constants from "../constants";
 import convert from '../lib/convert';
 
-export default class PantoneScreen extends React.Component {
+class PantoneScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <Header>
@@ -74,16 +76,21 @@ export default class PantoneScreen extends React.Component {
     });
   };
 
+  onGetColorFormula = () => {
+    const { selectedColor } = this.state;
+    const image = {...this.props.navigation.getParam('image'), selectedColor};
+    this.saveImage(image);
+
+    this.props.dispatch(actionCreators.updateFormulaColor(selectedColor.pantone));
+    this._gotoPage('Formul');
+  };
+
   renderInkButton = () => {
     const { selectedColor } = this.state;
     
     return (
       <Button full success disabled={selectedColor == null}
-        onPress={() => {
-          const image = {...this.props.navigation.getParam('image'), selectedColor};
-          this.saveImage(image);
-          this.props.navigation.navigate("Inks", { selectedColor });
-        }}
+        onPress={this.onGetColorFormula}
       >
         <Text style={styles.defaultBtnTxt}>
           {selectedColor != null ? 'Recommend Inks' : 'Tap the correct color to select'}
@@ -127,6 +134,11 @@ export default class PantoneScreen extends React.Component {
     );
   };
 
+  _gotoPage(page = 'Home') {
+    const { navigation } = this.props;
+    navigation.navigate(page);
+  }
+
   render() {
 
     return (
@@ -152,6 +164,8 @@ export default class PantoneScreen extends React.Component {
     );
   }
 }
+
+export default connect()(PantoneScreen);
 
 const styles = StyleSheet.create({
   imageContainer: {

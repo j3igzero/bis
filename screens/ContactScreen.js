@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet } from 'react-native';
 import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, Form, Item, Label, Input, View } from "native-base";
-import Color from "color";
+import { connect } from 'react-redux';
+import { buildPMSData } from '../redux/func';
 
-export default class HomeScreen extends React.Component {
+class ContactScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <Header>
@@ -25,9 +26,7 @@ export default class HomeScreen extends React.Component {
   });
 
   render() {
-    const { navigation } = this.props;
-    const selectedColor = navigation.getParam('selectedColor');
-    const oColor = Color(selectedColor.hex);
+    const { currentColor, data } = this.props;
 
     return (
       <Container>
@@ -48,9 +47,9 @@ export default class HomeScreen extends React.Component {
           </Form>
           <View style={{ ...styles.textCenter, ...styles.mbSm }}>
             <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>COLOR YOU WANT TO MIX</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: selectedColor.hex }}></View>
-            <Text>{selectedColor.pantone}</Text>
-            <Text>{oColor.rgb().string().toUpperCase()}</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: data.hex }}></View>
+            <Text>{data.short_name}</Text>
+            <Text>{data.rgb.toUpperCase()}</Text>
           </View>
         </Content>
         <Footer>
@@ -66,6 +65,19 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
+
+const mapState = state => {
+  const { currentColor } = state.formula;
+
+  if (!!currentColor) {
+    return {
+      currentColor,
+      data: buildPMSData(currentColor),
+    };
+  }
+  return { currentColor };
+};
+export default connect(mapState)(ContactScreen);
 
 const styles = StyleSheet.create({
   defaultBtnTxt: {
