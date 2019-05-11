@@ -20,7 +20,7 @@ export const buildPMSData = pantone => {
     const name = 'PMS ' + pantone.replace(' C', '');
     const full_name = 'PMS ' + pantone;
     const hex = '#'+ convert.PMS2RGB(pantone);
-    const rgb = Color(hex).rgb().string();
+    const rgb = (hex == '#') ? 'No RGB' : Color(hex).rgb().string();
 
     return { name, full_name, short_name: pantone, hex, rgb };
   }

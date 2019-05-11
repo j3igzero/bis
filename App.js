@@ -23,3 +23,6 @@ export default class App extends React.Component {
 
 const store = createStore(reducer, undefined, compose(applyMiddleware(thunk), autoRehydrate()));
 persistStore(store, {storage: AsyncStorage})
+
+/*** OR (not persist) ***/
+// const store = createStore(reducer, undefined, applyMiddleware(thunk));

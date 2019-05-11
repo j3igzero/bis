@@ -32,7 +32,9 @@ class FormulaScreen extends React.Component {
   renderColorItems = ({ name, hex, percent }, i) => {
     return (
       <View style={styles.rowColor}>
-        <Text>{name}</Text>
+        <View style={{ justifyContent: 'center', minHeight: 30, width: width/5 }}>
+          <Text style={{ fontSize: 11, textAlign: 'center' }}>{name}</Text>
+        </View>
         <View style={[styles.rowItem, { backgroundColor: hex }]}>
           <Text style={AppStyles.TextButton}>{percent}%</Text>
         </View>
@@ -42,11 +44,13 @@ class FormulaScreen extends React.Component {
   };
 
   renderFormula() {
-    const { formulaData } = this.props;
+    const { formulaData, loading } = this.props;
     return (
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
         {!formulaData ? 
-          (<Text>No formula found!</Text>) : 
+          <Text>
+            {loading ? 'Analyzing...' : 'No formula found!'}
+          </Text> : 
           formulaData.map(this.renderColorItems)
         }
 
@@ -136,6 +140,7 @@ const mapState = state => {
 
   if (!!currentColor) {
     return {
+      loading: state.loading,
       currentColor,
       data: buildPMSData(currentColor),
       formulaData: data[currentColor],
@@ -166,7 +171,9 @@ const styles = StyleSheet.create({
   rowItem: {
     width: width / 5,
     height: width / 7,
-    marginVertical: 10,
+    // marginVertical: 10,
+    marginTop: 5,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: AppStyles.Color.border,
     alignItems: 'center',

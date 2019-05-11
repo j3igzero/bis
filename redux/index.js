@@ -39,7 +39,7 @@ export const actionCreators = {
 
 /*** REDUCERS ***/
 const initialState = {
-  loading: true,
+  loading: false,
   error: false,
   errorMessage: '',
 
