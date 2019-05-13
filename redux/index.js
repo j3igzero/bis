@@ -5,6 +5,7 @@ export const types = {
   GET_COLOR_FORMULA_RESPONSE: 'GET_COLOR_FORMULA_RESPONSE',
   UPDATE_SEARCH_QUERY: 'UPDATE_SEARCH_QUERY',
   UPDATE_FORMULA_COLOR: 'UPDATE_FORMULA_COLOR',
+  SAVE_CONTACT_INFO: 'SAVE_CONTACT_INFO',
 };
 
 // Action creators
@@ -35,6 +36,7 @@ export const actionCreators = {
   },
   updateSearchQuery: query => ({ type: types.UPDATE_SEARCH_QUERY, payload: query }),
   updateFormulaColor: pantone => ({ type: types.UPDATE_FORMULA_COLOR, payload: pantone }),
+  saveContactInfo: contact => ({ type: types.SAVE_CONTACT_INFO, payload: contact }),
 };
 
 /*** REDUCERS ***/
@@ -54,6 +56,11 @@ const initialState = {
   formula: {
     currentColor: null,
     data: {},
+  },
+  contact: {
+    your_name: null,
+    your_email: null,
+    your_telephone: null,
   },
 };
 
@@ -83,6 +90,9 @@ export const reducer = (state = initialState, action) => {
     }
     case types.UPDATE_FORMULA_COLOR: {
       return {...state, formula: {...formula, currentColor: payload}};
+    }
+    case types.SAVE_CONTACT_INFO: {
+      return {...state, contact: payload};
     }
   }
 
