@@ -54,13 +54,13 @@ const initialState = {
     ],
   },
   formula: {
-    currentColor: null,
+    currentColor: '123 C',
     data: {},
   },
   contact: {
-    your_name: null,
-    your_email: null,
-    your_telephone: null,
+    your_name: '',
+    your_email: '',
+    your_telephone: '',
   },
 };
 

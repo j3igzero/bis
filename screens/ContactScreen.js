@@ -2,9 +2,25 @@ import React from "react";
 import { StyleSheet } from 'react-native';
 import { Container, Content, Header, Body, Title, Right, Button, Icon, Left, Text, Footer, FooterTab, Form, Item, Label, Input, View } from "native-base";
 import { connect } from 'react-redux';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import { actionCreators } from '../redux';
 import { buildPMSData, postRequest } from '../redux/func';
+
+const ContactSchema = Yup.object().shape({
+  your_name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  your_email: Yup.string()
+    .email('Invalid email')
+    .required('Required'),
+  your_telephone: Yup.string()
+    .required('Required')
+    .matches(/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/, 'Phone number is not valid'),
+});
+
 
 class ContactScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -28,19 +44,85 @@ class ContactScreen extends React.Component {
   });
 
   state = {
-    your_name: null, your_email: null, your_telephone: null,
     loading: false,
+  };
+
+  formValues = {
+    your_name: '', your_email: '', your_telephone: ''
   };
 
   componentWillMount() {
     const { your_name, your_email, your_telephone } = this.props;
-    this.setState({ your_name, your_email, your_telephone });
+    this.formValues = { your_name, your_email, your_telephone };
   }
 
-  onContactRequest = async () => {
+  renderForm = ({ handleChange, handleSubmit, values, errors, touched }) => {
+
+    // console.log(errors, touched);
+    const { currentColor, colorData } = this.props;
+    const err_name = (touched.your_name && !!errors.your_name);
+    const err_email = (touched.your_email && !!errors.your_email);
+    const err_telephone = (touched.your_telephone && !!errors.your_telephone);
+
+    return (
+      <Container>
+        <Content padder>
+          <Form style={styles.mbLg}>
+            <Item fixedLabel error={err_name} >
+              <Input  
+                placeholder='Name *'
+                onChangeText={handleChange('your_name')}
+                value={values.your_name}
+              />
+              {err_name && <Icon name='close-circle' />}
+            </Item>
+            {err_name && <Text style={styles.errText}>{errors.your_name}</Text>}
+
+            <Item fixedLabel error={err_email} >
+              <Input 
+                placeholder='Email *'
+                onChangeText={handleChange('your_email')}
+                value={values.your_email}
+              />
+              {err_email && <Icon name='close-circle' />}
+            </Item>
+            {err_email && <Text style={styles.errText}>{errors.your_email}</Text>}
+
+            <Item fixedLabel error={err_telephone} last >
+              <Input 
+                placeholder='Telephone *'
+                keyboardType='numeric'
+                onChangeText={handleChange('your_telephone')}
+                value={values.your_telephone}
+              />
+              {err_telephone && <Icon name='close-circle' />}
+            </Item>
+            {err_telephone && <Text style={styles.errText}>{errors.your_telephone}</Text>}
+          </Form>
+          <View style={{ ...styles.textCenter, ...styles.mbSm }}>
+            <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>COLOR YOU WANT TO MIX</Text>
+            <View style={{ ...styles.mainColor, backgroundColor: colorData.hex }}></View>
+            <Text>{colorData.short_name}</Text>
+            <Text>{colorData.rgb.toUpperCase()}</Text>
+          </View>
+        </Content>
+        <Footer>
+          <FooterTab>
+            <Button full success disabled={this.state.loading}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.defaultBtnTxt}>Send your request</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
+      </Container>
+    );
+  };
+
+  onContactRequest = async (values) => {
     this.setState({ loading: true });
 
-    const { your_name, your_email, your_telephone } = this.state;
+    const { your_name, your_email, your_telephone } = values;
     const { currentColor } = this.props;
     this.props.dispatch(actionCreators.saveContactInfo({ your_name, your_email, your_telephone }));
     
@@ -69,52 +151,10 @@ class ContactScreen extends React.Component {
   };
 
   render() {
-    const { currentColor, colorData } = this.props;
-
     return (
-      <Container>
-        <Content padder>
-          <Form style={styles.mbLg}>
-            <Item fixedLabel>
-              <Label>Name *</Label>
-              <Input  
-                onChangeText={your_name => this.setState({ your_name })}
-                value={this.state.your_name}
-              />
-            </Item>
-            <Item fixedLabel>
-              <Label>Email *</Label>
-              <Input 
-                onChangeText={your_email => this.setState({ your_email })}
-                value={this.state.your_email}
-              />
-            </Item>
-            <Item fixedLabel last>
-              <Label>Telephone *</Label>
-              <Input 
-                keyboardType='numeric'
-                onChangeText={your_telephone => this.setState({ your_telephone })}
-                value={this.state.your_telephone}
-              />
-            </Item>
-          </Form>
-          <View style={{ ...styles.textCenter, ...styles.mbSm }}>
-            <Text style={{ ...styles.strongTxt, ...styles.mxMd }}>COLOR YOU WANT TO MIX</Text>
-            <View style={{ ...styles.mainColor, backgroundColor: colorData.hex }}></View>
-            <Text>{colorData.short_name}</Text>
-            <Text>{colorData.rgb.toUpperCase()}</Text>
-          </View>
-        </Content>
-        <Footer>
-          <FooterTab>
-            <Button full success disabled={this.state.loading}
-              onPress={this.onContactRequest}
-            >
-              <Text style={styles.defaultBtnTxt}>Send your request</Text>
-            </Button>
-          </FooterTab>
-        </Footer>
-      </Container>
+      <Formik initialValues={this.formValues} onSubmit={this.onContactRequest} validationSchema={ContactSchema} >
+        {this.renderForm}
+      </Formik>
     );
   }
 }
@@ -156,5 +196,8 @@ const styles = StyleSheet.create({
   },
   mxMd: {
     marginVertical: 20,
+  },
+  errText: {
+    color: 'red', fontSize: 11, marginLeft: 20
   },
 });
