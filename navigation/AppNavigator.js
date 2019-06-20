@@ -31,12 +31,7 @@ const AppNavigator = createStackNavigator(
         Search: SearchScreen,
     },
     {
-        // initialRouteName: "Search",
-        // initialRouteName: "Formul",
-        // initialRouteName: "ColorProfile",
-        // initialRouteName: "Inks",
         initialRouteName: "Guest",
-        // initialRouteName: "Home",
     }
 );
 

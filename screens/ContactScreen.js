@@ -127,11 +127,13 @@ class ContactScreen extends React.Component {
     this.props.dispatch(actionCreators.saveContactInfo({ your_name, your_email, your_telephone }));
     
     try {
-      // const response = await postRequest('https://j3igzero-test.firebaseio.com/contact.json', {
-      //   action: 'contact_to_quote',
-      //   fields: { your_name, your_email, your_telephone, your_color: currentColor },
-      // });
-      const response = await fetch('https://j3igzero-test.firebaseio.com/contact.json');  // temp for testing
+      /** Waiting for backend... */
+      const response = await postRequest('https://www.bostonindustrialsolutions.com/contact-to-quote/', {
+        action: 'contact_to_quote',
+        fields: { your_name, your_email, your_telephone, your_color: currentColor },
+      });
+      /** Fake api */
+      // const response = await fetch('https://j3igzero-test.firebaseio.com/contact.json');  // temp for testing
       const response_json = await response.json();
       console.log(response_json);
 
