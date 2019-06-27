@@ -31,12 +31,14 @@ export default class GuestScreen extends Component {
               onFocus={() => this._gotoPage('Search')}
             />
             <Icon type="FontAwesome" name="paperclip" style={AppStyles.iconInput} />
-            <Icon type="FontAwesome" name="camera" style={[AppStyles.iconInput, { color: '#01579b', marginLeft: 8 }]} />
+            <Icon type="FontAwesome" name="camera" style={[AppStyles.iconInput, { color: '#01579b', marginLeft: 8 }]} 
+              onPress={() => this._gotoPage()}
+            />
           </View>
           <View style={styles.actionList}>
             <View style={styles.actionItem}>
               <Button transparent={true} style={styles.actionButton}
-                onPress={() => { }}
+                onPress={() => this._gotoPage()}
               >
                 <Image
                   style={{ width: 40, height: 40 }}
@@ -72,9 +74,7 @@ export default class GuestScreen extends Component {
             <Text style={AppStyles.TextButton}>Sign Up</Text>
           </Button>
           <View style={styles.footerPage}>
-            <Text style={[AppStyles.textLink, { marginVertical: 20 }]}
-              onPress={() => this._gotoPage()}
-            >Already have an account?</Text>
+            <Text style={[AppStyles.textLink, { marginVertical: 20 }]}>Already have an account?</Text>
             <View>
               <Text style={styles.copyRight}>By signing up, you agree with the
               <Text style={AppStyles.textLink}> Terms of Service</Text> and
